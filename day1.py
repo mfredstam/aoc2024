@@ -1,9 +1,18 @@
+TEST = False
 
+def get_input():
+    input_file = "input/day1.txt"
+    if TEST:
+        input_file = "input/day1_test.txt"
+
+    with open(input_file) as fd:
+        lines = fd.readlines()
+    return lines
 
 def main():
-    with open("input/day1.txt") as fd:
-        lines = fd.readlines()
+    lines = get_input()
 
+    # ---PART 1 ---------------------
     right_list = []
     left_list = []
 
@@ -21,8 +30,11 @@ def main():
     print("Part 1: ", sum(diff_dist))
 
 
-    translation = {}  # Lookup table
-    lvalue_seen = {}
+    # ---PART 2 ---------------------
+
+    translation = {}  # Lookup table, no need to calculate again
+    lvalue_seen = {}  # Number of times the left value has been seen
+
     for lvalue in left_list:
         try:
             lvalue_seen[lvalue] += 1
@@ -37,7 +49,6 @@ def main():
             if lvalue == rvalue:
                 number_of_occurance += 1
         translation[lvalue] = number_of_occurance
-
 
     sim_sum = 0
     for lvalue in lvalue_seen:
