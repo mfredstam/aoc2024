@@ -19,18 +19,31 @@ def check_diff(level: list, min=1, max=3) -> bool:
     return True
 
 
+def check_levels(levels: list[int]) -> bool:
+    incr_or_decr_ok = sorted(levels) == levels or sorted(levels, reverse=True) == levels
+    diff_ok = check_diff(levels)
+    if incr_or_decr_ok and diff_ok:
+        return True
+    return False
+
+
+def problem_dampener_solves(levels: list[int]) -> bool:
+    for idx in range(0, len(levels)):
+        modified_levels = levels.copy()
+        modified_levels.pop(idx)
+        if check_levels(modified_levels):
+            return True
+    return False
+
+
 def main():
     reports = get_input()
 
     # ---PART 1 ---------------------
     part1_solution = 0
     for report in reports:
-        levels = report.split(" ")
-        levels = list(map(int, levels))
-
-        incr_or_decr_ok = sorted(levels) == levels or sorted(levels, reverse=True) == levels
-        diff_ok = check_diff(levels)
-        if incr_or_decr_ok and diff_ok:
+        levels = list(map(int, report.split(" ")))
+        if check_levels(levels):
             part1_solution += 1
 
     print("Part 1: ", part1_solution)
@@ -38,6 +51,12 @@ def main():
 
     # ---PART 2 ---------------------
     part2_solution = 0
+    for report in reports:
+        levels = list(map(int, report.split(" ")))
+        if check_levels(levels):
+            part2_solution += 1
+        elif problem_dampener_solves(levels):
+            part2_solution += 1
 
     print("Part 2: ", part2_solution)
 
