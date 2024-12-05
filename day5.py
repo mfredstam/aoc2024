@@ -34,6 +34,20 @@ def correct_order(update: list, rules: list):
     return True
 
 
+def fix_update(update: list, rules: list) -> list:
+    for _ in range(0,5):
+        for rule in rules:
+            if rule[0] not in update or rule[1] not in update:
+                continue
+
+            left_idx = update.index(rule[0])
+            right_idx = update.index(rule[1])
+            if left_idx > right_idx:
+                value = update.pop(left_idx)
+                update.insert(right_idx, value)
+    return update
+
+
 def main():
     lines = get_input()
 
@@ -51,6 +65,11 @@ def main():
 
     # ---PART 2 ---------------------
     part2_solution = 0
+
+    for update in updates:
+        if not correct_order(update, rules):
+            fixed_update = fix_update(update, rules)
+            part2_solution += int(fixed_update[len(fixed_update)//2])
 
     print("Part 2: ", part2_solution)
 
