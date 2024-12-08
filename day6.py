@@ -80,6 +80,38 @@ def walk(matrix: dict, start_pos: tuple, direction: int) -> int:
     return len(set(distinct_positions))
 
 
+def walk_2(matrix: dict, start_pos: tuple, direction: int) -> int:
+    distinct_positions = []
+    in_area = True
+    current_pos = list(start_pos)
+    distinct_positions.append(tuple(current_pos))
+
+    while in_area:
+        next_pos = peek_next_pos(current_pos, direction)
+        try:
+            if matrix[tuple(next_pos)] == "#":
+                direction = change_direction(direction)
+            else:
+                move(current_pos, direction)
+                distinct_positions.append(tuple(current_pos))
+                if len(distinct_positions) > 10000:
+                    return True
+        except KeyError:
+            in_area = False
+    return False
+
+
+def walk_with_obstruction(matrix: dict, start_pos: tuple, direction: int) -> int:
+    num_of_loops = 0
+    for pos, c in matrix.items():
+        if c == ".":
+            matrix[pos] = "#"
+            if walk_2(matrix, start_pos, direction):
+                num_of_loops += 1
+            matrix[pos] = "."
+    return num_of_loops
+
+
 def main():
     lines = get_input()
     matrix, start_pos = parse(lines)
@@ -95,6 +127,8 @@ def main():
 
     # ---PART 2 ---------------------
     part2_solution = 0
+
+    part2_solution = walk_with_obstruction(matrix, start_pos, current_dir)
 
     print("Part 2: ", part2_solution)
 
