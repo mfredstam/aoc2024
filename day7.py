@@ -34,6 +34,8 @@ def apply_combination(test_value, nums, combinations) -> int:
                 expr = expr + n
             elif comb == "*":
                 expr = expr * n
+            elif comb == "|":
+                expr = int(str(expr) + str(n))
         if test_value == expr:
             return test_value
     return 0
@@ -45,6 +47,24 @@ def evaluate(equations: list) -> int:
     for test_value, nums in equations:
         combinations = generate_combinations(len(nums) - 1)
         assert len(combinations) == 2**(len(nums) - 1)
+
+        total_calibration_result += apply_combination(test_value, nums, combinations)
+
+    return total_calibration_result
+
+
+def generate_combinations_2(N) -> list:
+    operators = ['+', '*', '|']
+    combinations = itertools.product(operators, repeat=N)
+    return [''.join(comb) for comb in combinations]
+
+
+def evaluate_2(equations: list) -> int:
+    total_calibration_result = 0
+
+    for test_value, nums in equations:
+        combinations = generate_combinations_2(len(nums) - 1)
+        assert len(combinations) == 3**(len(nums) - 1)
 
         total_calibration_result += apply_combination(test_value, nums, combinations)
 
@@ -65,6 +85,8 @@ def main():
 
     # ---PART 2 ---------------------
     part2_solution = 0
+
+    part2_solution = evaluate_2(equations)
 
     print("Part 2: ", part2_solution)
 
