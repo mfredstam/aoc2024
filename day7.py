@@ -1,5 +1,4 @@
 import itertools
-from pprint import pprint
 
 TEST = False
 
@@ -14,10 +13,10 @@ def get_input():
 
 
 def parse(lines: list) -> dict:
-    equations = {}
+    equations = []
     for line in lines:
         test_value, nums = line.strip().split(": ")
-        equations[int(test_value)] = [int(x) for x in nums.split(" ")]
+        equations.append((int(test_value), [int(x) for x in nums.split(" ")]))
     return equations
 
 
@@ -29,8 +28,6 @@ def generate_combinations(N) -> list:
 
 def apply_combination(test_value, nums, combinations) -> int:
     for combination in combinations:
-        print("# Ops:  ", combination)
-        print("# Nums: ", nums)
         expr = nums[0]
         for comb, n in zip(combination, nums[1:]):
             if comb == "+":
@@ -38,17 +35,16 @@ def apply_combination(test_value, nums, combinations) -> int:
             elif comb == "*":
                 expr = expr * n
         if test_value == expr:
-            print("### IS TEST VALUE: ", test_value, " - ", expr)
             return test_value
     return 0
 
 
-def evaluate(equations: dict) -> int:
+def evaluate(equations: list) -> int:
     total_calibration_result = 0
 
-    for test_value, nums in equations.items():
-        combinations = generate_combinations(len(nums)-1)
-        assert len(combinations) == 2**(len(nums)-1)
+    for test_value, nums in equations:
+        combinations = generate_combinations(len(nums) - 1)
+        assert len(combinations) == 2**(len(nums) - 1)
 
         total_calibration_result += apply_combination(test_value, nums, combinations)
 
@@ -65,11 +61,6 @@ def main():
     part1_solution = evaluate(equations)
 
     print("Part 1: ", part1_solution)
-
-    high = 6392014489308
-    low =  6392012775707
-    print("Middle: ", low < part1_solution < high)
-    print("Test: 3749")
 
 
     # ---PART 2 ---------------------
