@@ -40,18 +40,60 @@ def defrag_disk(disk: list) -> list:
     return disk
 
 
+def defrag_disk_full_file(disk: list) -> list:
+    prev_id = -1
+    for i, x in enumerate(reversed(disk), start=1):
+        if x[0] == ".":
+            continue
+
+        current_id = x[0]
+        if current_id == prev_id:
+            continue
+
+        right_most_file_idx = len(disk) - i
+        left_most_file_idx = right_most_file_idx
+        while disk[left_most_file_idx-1][0] == disk[right_most_file_idx][0]:
+            left_most_file_idx -= 1
+
+        file_size = right_most_file_idx - left_most_file_idx + 1
+
+        free_size = 0
+        right_most_free_idx = 0
+
+        while file_size > free_size:
+            try:
+                left_most_free_idx = disk.index((".",), right_most_free_idx+1, left_most_file_idx+1)
+            except ValueError:
+                prev_id = current_id
+                break
+            right_most_free_idx = left_most_free_idx
+            while disk[right_most_free_idx + 1][0] == ".":
+                right_most_free_idx += 1
+            free_size = right_most_free_idx - left_most_free_idx + 1
+
+
+        if current_id != prev_id:
+            for i in range(0, file_size):
+                disk[left_most_free_idx+i], disk[left_most_file_idx+i] = disk[left_most_file_idx+i], disk[left_most_free_idx+i]
+
+    return disk
+
+
 def calc_checksum(disk: list) -> int:
     sum = 0
     for i, c in enumerate(disk):
         if c[0] == ".":
-            break
+            continue
         sum += (i * c[0])
     return sum
 
 
-def calculate_checksum(disk_map: str) -> int:
+def calculate_checksum(disk_map: str, full_file=False) -> int:
     disk = parse(disk_map)
-    disk = defrag_disk(disk)
+    if full_file:
+        disk = defrag_disk_full_file(disk)
+    else:
+        disk = defrag_disk(disk)
     checksum = calc_checksum(disk)
     return checksum
 
@@ -69,6 +111,8 @@ def main():
 
     # ---PART 2 ---------------------
     part2_solution = 0
+
+    part2_solution = calculate_checksum(disk_map, full_file=True)
 
     print("Part 2: ", part2_solution)
 
