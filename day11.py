@@ -17,7 +17,6 @@ def parse(line: str) -> list:
 
 
 def blink(stones: list, n: int) -> int:
-    # lookup = {0: (1,)}
     new_stones = []
     temp_stones = stones[:]
     for i in range(0, n):
@@ -37,6 +36,46 @@ def blink(stones: list, n: int) -> int:
         new_stones = temp_stones[:]
     return len(new_stones)
 
+def to_dict_counter(stones: list) -> dict:
+    a = {}
+    for stone in stones:
+        try:
+            a[stone] += 1
+        except KeyError:
+            a[stone] = 1
+    return a
+
+
+def blink_2(stones: dict, n: int) -> int:
+    for i in range(0, n):
+        print("Blink:", i)
+        temp_stones = {}
+        for k, v in stones.items():
+            if k == 0:
+                try:
+                    temp_stones[1] += v
+                except KeyError:
+                    temp_stones[1] = v
+            elif len(str(k)) % 2 == 0:
+                s = str(k)
+                a = int(s[:len(s)//2])
+                b = int(s[len(s)//2:])
+                try:
+                    temp_stones[a] += v
+                except KeyError:
+                    temp_stones[a] = v
+                try:
+                    temp_stones[b] += v
+                except KeyError:
+                    temp_stones[b] = v
+            else:
+                try:
+                    temp_stones[k * 2024] += v
+                except KeyError:
+                    temp_stones[k * 2024] = v
+        stones = temp_stones
+    return sum(stones.values())
+
 def main():
     line = get_input()[0].strip()
 
@@ -53,7 +92,9 @@ def main():
     # ---PART 2 ---------------------
     part2_solution = 0
 
-    part2_solution = blink(stones, n=75)
+    stones = to_dict_counter(stones)
+
+    part2_solution = blink_2(stones, n=75)
 
     print("Part 2: ", part2_solution)
 
