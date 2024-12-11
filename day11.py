@@ -1,5 +1,6 @@
 TEST = False
 
+
 def get_input():
     input_file = "input/day11.txt"
     if TEST:
@@ -36,6 +37,7 @@ def blink(stones: list, n: int) -> int:
         new_stones = temp_stones[:]
     return len(new_stones)
 
+
 def to_dict_counter(stones: list) -> dict:
     a = {}
     for stone in stones:
@@ -48,7 +50,6 @@ def to_dict_counter(stones: list) -> dict:
 
 def blink_2(stones: dict, n: int) -> int:
     for i in range(0, n):
-        print("Blink:", i)
         temp_stones = {}
         for k, v in stones.items():
             if k == 0:
@@ -75,6 +76,7 @@ def blink_2(stones: dict, n: int) -> int:
                     temp_stones[k * 2024] = v
         stones = temp_stones
     return sum(stones.values())
+
 
 def main():
     line = get_input()[0].strip()
