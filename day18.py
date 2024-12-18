@@ -14,20 +14,32 @@ def get_input():
 
 def parse(lines: list, n: int=1024) -> dict:
     grid = {}
-    for x in range(0, 71):
-        for y in range(0, 71):
+    if TEST:
+        g = 7
+    else:
+        g = 71
+    for x in range(0, g):
+        for y in range(0, g):
             grid[(x, y)] = "."
 
+    prev_coord = None
     for i, coord in enumerate(lines):
         if i >= n:
             break
         x, y = coord.strip().split(",")
         grid[(int(y), int(x))] = "#"
+        prev_coord = coord
     
-    return grid
+    return grid, prev_coord
 
 
-def solve(grid: dict, start: tuple, end: tuple) -> int:
+def solve(grid: dict) -> int:
+    start = (0, 0)
+    if TEST:
+        end = (6, 6)
+    else:
+        end = (70, 70)
+
     directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # Right, Down, Left, Up
 
     # Priority queue to hold (cost, row, col, path)
@@ -52,30 +64,42 @@ def solve(grid: dict, start: tuple, end: tuple) -> int:
 
             if (r, c) in grid and grid[(r, c)] == "." and (r, c) not in visited:
                 heapq.heappush(pq, (cost + 1, r, c, path + [(r, c)]))
-    return float('inf'), []
+    return -1, []
 
 def main():
     lines = get_input()
     if TEST:
-        grid = parse(lines, n=12)
+        grid, _ = parse(lines, n=12)
     else:
-        grid = parse(lines, n=1024)
+        grid, _ = parse(lines, n=1024)
 
     # ---PART 1 ---------------------
     part1_solution = 0
 
-    start = (0, 0)
-    if TEST:
-        end = (6, 6)
-    else:
-        end = (70, 70)
-    part1_solution, path = solve(grid, start, end)
+    part1_solution, path = solve(grid)
 
     print("Part 1: ", part1_solution)
 
 
     # ---PART 2 ---------------------
     part2_solution = 0
+
+    if TEST:
+        s = 12
+        e = 25
+    else:
+        s = 1024
+        e = 3450
+
+    for i in range(s, e):
+        grid, coord = parse(lines, n=i)
+
+        part2_solution, path = solve(grid)
+
+        if part2_solution == -1:
+            part2_solution = coord
+            break
+
 
     print("Part 2: ", part2_solution)
 
